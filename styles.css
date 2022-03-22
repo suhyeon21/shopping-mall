@@ -18,6 +18,7 @@ body {
   background: var(--mainWhite);
   font-family: "Lato", sans-serif;
 }
+
 /* --------------- Navbar ---------------- */
 .navbar {
   position: sticky;
@@ -42,13 +43,13 @@ body {
   font-size: 1.5rem;
 }
 .cart-btn {
-  position: relative;
+  position: relative; /* position:absoulte의 부모 */
   cursor: pointer;
 }
 .cart-items {
   position: absolute;
-  top: -8px;
-  right: -8px;
+  top: -12px;
+  right: 10px;
   background: var(--primaryColor);
   padding: 0 5px;
   border-radius: 30%;
@@ -57,7 +58,7 @@ body {
 /* --------------- End of Navbar ---------------- */
 /* --------------- Hero ---------------- */
 .hero {
-  min-height: calc(100vh - 60px);
+  min-height: calc(100vh - 60px); /*navbar 크기 뺀거 */
   background: url("./images/hero-bcg.jpeg") center/cover no-repeat;
   display: flex;
   align-items: center;
@@ -165,6 +166,7 @@ body {
 }
 
 /* ---------------End of Products ---------------- */
+
 /* --------------- Cart ---------------- */
 .cart-overlay {
   position: fixed;
