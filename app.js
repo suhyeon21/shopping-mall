@@ -1,5 +1,10 @@
 //variables
 
+const client = contentful.createClient({
+  space: "pgbybqtun8jn",
+  accessToken: "pWJNcSFbSu1KRIex5LzOtcW5EbKBFiXOwVFZfo2uqRc",
+});
+console.log(client);
 const cartBtn = document.querySelector(".cart-btn");
 const closeCartBtn = document.querySelector(".close-cart");
 const clearCartBtn = document.querySelector(".clear-cart");
@@ -18,21 +23,30 @@ let buttonsDOM = [];
 class Products {
   async getProducts() {
     try {
-      let result = await fetch("products.json");
-      let data = await result.json();
-      let products = data.items;
+      let contentful = await client.getEntries({
+        content_type: "comfyHouseProducts",
+      });
+      console.log(contentful);
+
+      // let result = await fetch("products.json");
+      // let data = await result.json();
+
+      let products = contentful.items;
+
       products = products.map((item) => {
         const { title, price } = item.fields;
         const { id } = item.sys;
         const image = item.fields.image.fields.file.url;
         return { title, price, id, image };
       });
+      console.log(products);
       return products;
     } catch (error) {
       console.log(error);
     }
   }
 }
+
 //display products
 class UI {
   displayProducts(products) {
@@ -65,25 +79,25 @@ class UI {
       if (inCart) {
         button.innerText = "In Cart";
         button.disables = true;
-      }
-      button.addEventListener("click", (event) => {
-        event.target.innerText = "In Cart";
-        event.target.disables = true;
-        //get product from products
-        let cartItem = { ...Storage.getProduct(id), amount: 1 };
+      } else
+        button.addEventListener("click", (event) => {
+          event.target.innerText = "In Bag";
+          event.target.disables = true;
+          //get product from products
+          let cartItem = { ...Storage.getProduct(id), amount: 1 };
 
-        //add product to the cart
-        cart = [...cart, cartItem];
+          //add product to the cart
+          cart = [...cart, cartItem];
 
-        //save cart in local storage
-        Storage.saveCart(cart);
-        //set cart values
-        this.setCartValues(cart);
-        //display cart item
-        this.addCartItem(cartItem);
-        //show the cart
-        this.showCart();
-      });
+          //save cart in local storage
+          Storage.saveCart(cart);
+          //set cart values
+          this.setCartValues(cart);
+          //display cart item
+          this.addCartItem(cartItem);
+          //show the cart
+          this.showCart();
+        });
     });
   }
   setCartValues(cart) {
@@ -183,7 +197,7 @@ class UI {
     Storage.saveCart(cart);
     let button = this.getSingleButton(id);
     button.disabled = false;
-    button.innerHTML = `<i class="fas fa-shopping-cart"></i>add to cart`;
+    button.innerHTML = `<i class="fas fa-shopping-cart">add to cart</i>`;
   }
   getSingleButton(id) {
     return buttonsDOM.find((button) => button.dataset.id === id);
