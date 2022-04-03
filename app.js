@@ -1,10 +1,10 @@
 //variables
 
-const client = contentful.createClient({
-  space: "pgbybqtun8jn",
-  accessToken: "pWJNcSFbSu1KRIex5LzOtcW5EbKBFiXOwVFZfo2uqRc",
-});
-console.log(client);
+// const client = contentful.createClient({
+//   space: "pgbybqtun8jn",
+//   accessToken: "pWJNcSFbSu1KRIex5LzOtcW5EbKBFiXOwVFZfo2uqRc",
+// });
+// console.log(client);
 const cartBtn = document.querySelector(".cart-btn");
 const closeCartBtn = document.querySelector(".close-cart");
 const clearCartBtn = document.querySelector(".clear-cart");
@@ -23,15 +23,15 @@ let buttonsDOM = [];
 class Products {
   async getProducts() {
     try {
-      let contentful = await client.getEntries({
-        content_type: "comfyHouseProducts",
-      });
-      console.log(contentful);
+      // let contentful = await client.getEntries({
+      //   content_type: "comfyHouseProducts",
+      // });
+      // console.log(contentful);
 
-      // let result = await fetch("products.json");
-      // let data = await result.json();
+      let result = await fetch("products.json");
+      let data = await result.json();
 
-      let products = contentful.items;
+      let products = data.items;
 
       products = products.map((item) => {
         const { title, price } = item.fields;
@@ -78,11 +78,11 @@ class UI {
       let inCart = cart.find((item) => item.id === id);
       if (inCart) {
         button.innerText = "In Cart";
-        button.disables = true;
+        button.disabled = true;
       } else
         button.addEventListener("click", (event) => {
           event.target.innerText = "In Bag";
-          event.target.disables = true;
+          event.target.disabled = true;
           //get product from products
           let cartItem = { ...Storage.getProduct(id), amount: 1 };
 
@@ -155,8 +155,19 @@ class UI {
       if (event.target.classList.contains("remove-item")) {
         let removeItem = event.target;
         let id = removeItem.dataset.id;
-        console.log(removeItem.parentElement.parentElement);
-        this.removeItem(id);
+        cart = cart.filter((item) => item.id !== id);
+        console.log(cart);
+
+        this.setCartValues(cart);
+        Storage.saveCart(cart);
+        cartContent.removeChild(removeItem.parentElement.parentElement);
+        const buttons = [...document.querySelectorAll(".bag-btn")];
+        buttons.forEach((button) => {
+          if (parseInt(button.dataset.id) === id) {
+            button.disabled = false;
+            button.innerHTML = `<i class="fas fa-shopping-cart"></i>add to bag`;
+          }
+        });
       } else if (event.target.classList.contains("fa-chevron-up")) {
         let addAmount = event.target;
         let id = addAmount.dataset.id;
